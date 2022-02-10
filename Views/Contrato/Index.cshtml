@@ -1,0 +1,102 @@
+﻿@model List<Evaluacion_Tecnica.Models.Contrato>
+
+@{
+    ViewBag.Title = "Contrato";
+}
+
+
+<section class="container formulario">
+    <div class="row">
+        <div class="col-12 col-lg-12 col-xs-12">
+            <label for="txtContrato">Tipo de Contrato:</label>
+        </div>
+        <div class="col-12 col-lg-12 col-xs-12">
+            <div class="col-xl-11 col-lg-11 col-xs-11 div-input">
+                @Html.TextBox("txtContrato")
+            </div>
+            <div class="col-xl-1 col-lg-1 col-xs-1 div-flecha">
+                <button type="submit" id="btnAgregarContrato">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" class="bi bi-arrow-down-short flecha-agregar" viewBox="0 0 16 16">
+                        <path fill-rule="evenodd" d="M8 4a.5.5 0 0 1 .5.5v5.793l2.146-2.147a.5.5 0 0 1 .708.708l-3 3a.5.5 0 0 1-.708 0l-3-3a.5.5 0 1 1 .708-.708L7.5 10.293V4.5A.5.5 0 0 1 8 4z" />
+                    </svg>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <span id="validacionVacio" class="error-validacion">Ingrese un contrato</span>
+    <span id="validacionLargo" class="error-validacion">El largo no puede superar los 15 caracteres</span>
+
+    <div class="grilla">
+        <table class="col-xl-12 col-lg-12 col-xs-12">
+            <tr>
+                <th class="col-xl-11 col-lg-11 col-xs-11 titulo-grilla">
+                    <button class="btn" id="btnOrdenar">Tipo<span id="triangulo"></span></button>
+                </th>
+                <th id="corazon" class="col-xl-1 col-lg-1 col-xs-1 div-corazon">
+                    <button type="submit" id="btnOrdenarEstado">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" class="bi bi-suit-heart-fill corazon-ordenar" viewBox="0 0 16 16">
+                            <path d="M4 1c2.21 0 4 1.755 4 3.92C8 2.755 9.79 1 12 1s4 1.755 4 3.92c0 3.263-3.234 4.414-7.608 9.608a.513.513 0 0 1-.784 0C3.234 9.334 0 8.183 0 4.92 0 2.755 1.79 1 4 1z" />
+                        </svg>
+                    </button>
+                </th>
+            </tr>
+
+            @foreach (var contrato in Model)
+            {
+                <tr>
+                    <td>@contrato.TipoContrato</td>
+                    <td>
+                        <div>
+                            @if (contrato.Estado == true)
+                            {
+                                <input class="form-check-input" type="checkbox" id="checkboxNoLabel" checked>
+                            }
+                            else
+                            {
+                                <input class="form-check-input" type="checkbox" id="checkboxNoLabel">
+                            }
+                        </div>
+                    </td>
+                </tr>
+            }
+        </table>
+    </div>
+</section>
+
+
+@section scripts{
+    <script>
+        $('#btnAgregarContrato').click(function () {
+            var nombre = $('#txtContrato').val();
+            if (nombre == "") {
+                $('#validacionLargo').fadeOut();
+                $('#validacionVacio').fadeIn();
+                return false;
+            }
+            if (nombre.length > 15) {
+                $('#validacionVacio').fadeOut();
+                $('#validacionLargo').fadeIn();
+                return false;
+            }
+            else {
+                $('#validacion').fadeOut();
+                var url = "@Url.Action("AddContrato", "Contrato")";
+                var contrato = $("#txtContrato").val();
+                var data = { contrato: contrato };
+
+                $.post(url, data).done(document.location.reload())
+            }
+        });
+
+
+        $('#btnOrdenar').click(function () {
+            document.location = '@Url.Action("OrdenarContratos", "Contrato")';
+        });
+
+
+        $('#btnOrdenarEstado').click(function () {
+            document.location = '@Url.Action("OrdenarEstados", "Contrato")';
+        });
+    </script>
+}
